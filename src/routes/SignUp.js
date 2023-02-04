@@ -11,7 +11,6 @@ const SignUp = () => {
   const nav = useNavigate(); 
 
     const logInHandler = (token) => {
-        localStorage.setItem('idToken', token); 
         nav("/welcome");
     }
   
@@ -61,7 +60,8 @@ const SignUp = () => {
         }
       })
       .then((data) => {
-        logInHandler(data.idToken); 
+        logInHandler(data.idToken);
+        localStorage.setItem('idToken', data.idToken); 
       })
       .catch((err) => alert(err.message));
   };
@@ -125,12 +125,12 @@ const SignUp = () => {
               />
             </Form.Group>
             {logInStatus && (
-              <Button variant="dark" className="mb-2" type="submit">
+              <Button variant="secondary" className="mb-2" type="submit">
                 Log in
               </Button>
             )}
             {!logInStatus && (
-              <Button variant="dark" className="mb-2" type="submit">
+              <Button variant="secondary" className="mb-2" type="submit">
                 Register
               </Button>
             )}
