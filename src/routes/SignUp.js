@@ -62,6 +62,7 @@ const SignUp = () => {
       .then((data) => {
         logInHandler(data.idToken);
         localStorage.setItem('idToken', data.idToken); 
+        console.log(data);
       })
       .catch((err) => alert(err.message));
   };

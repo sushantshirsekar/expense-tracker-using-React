@@ -2,8 +2,43 @@ import { useRef } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 
 const UpdatePage = () => {
+  let emailVerification = localStorage.getItem("emailVerified");
   const nameref = useRef("");
   const picref = useRef("");
+  const verifyHandler = () => {
+    let storageId = localStorage.getItem("idToken");
+    fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBWGYRRzV87ZdrnvV_7QsU_lrt4uA9A2b4",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          requestType: "VERIFY_EMAIL",
+          idToken: storageId,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage = "Verification Failed";
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        alert("Please Check  " + data.email);
+      })
+      .catch((err) => alert(err.message));
+  };
   const submitHandler = (event) => {
     event.preventDefault();
     const enteredName = nameref.current.value;
@@ -41,11 +76,12 @@ const UpdatePage = () => {
         }
       })
       .then((data) => {
-        localStorage.setItem("displayName", data.displayName); 
+        localStorage.setItem("displayName", data.displayName);
         localStorage.setItem("photoUrl", data.photoUrl);
       })
       .catch((err) => alert(err.message));
   };
+
   return (
     <Container>
       <h1>Update Details</h1> <br />
@@ -72,6 +108,14 @@ const UpdatePage = () => {
           Update
         </Button>
       </Form>
+      {!emailVerification && (
+        <div className="mb-5">
+          <h1>Verify your Email</h1>
+          <Button variant="secondary" onClick={verifyHandler}>
+            Verify
+          </Button>
+        </div>
+      )}
     </Container>
   );
 };

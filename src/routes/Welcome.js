@@ -3,41 +3,9 @@ import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const Welcome = () => {
-  let storageId = localStorage.getItem("idToken");
-  const verifyHandler = () => {
-    fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBWGYRRzV87ZdrnvV_7QsU_lrt4uA9A2b4",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          requestType: "VERIFY_EMAIL",
-          idToken: storageId,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            let errorMessage = "Verification Failed";
-            if (data && data.error && data.error.message) {
-              errorMessage = data.error.message;
-            }
-            throw new Error(errorMessage);
-          });
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        alert("Please Check  "  +  data.email);
-      })
-      .catch((err) => alert(err.message));
-  };
+
   const detailsHandler = () => {
+  let storageId = localStorage.getItem("idToken");
     fetch(
       "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBWGYRRzV87ZdrnvV_7QsU_lrt4uA9A2b4",
       {
@@ -66,8 +34,15 @@ const Welcome = () => {
       .then((data) => {
         console.log(data.users[0].displayName);
         console.log(data.users[0].photoUrl);
-        localStorage.setItem("displayName", data.users[0].displayName);
+        if(data.users[0].displayName && data.users[0].photoUrl){
+            localStorage.setItem("displayName", data.users[0].displayName);
         localStorage.setItem("photoUrl", data.users[0].photoUrl);
+        }else{
+            localStorage.removeItem('displayName'); 
+            localStorage.removeItem('photoUrl');
+        }
+        
+        localStorage.setItem("emailVerified", data.users[0].emailVerified);
         console.log(data.users[0]);
         console.log(data);
       });
@@ -82,12 +57,7 @@ const Welcome = () => {
           Update Now
         </Link>
       </span>
-      <div className="mb-5">
-        <h1>Verify your Email</h1>
-        <Button variant="secondary" onClick={verifyHandler}>
-          Verify
-        </Button>
-      </div>
+      
     </div>
   );
 };
