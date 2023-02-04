@@ -25,6 +25,8 @@ const UpdatePage = () => {
       }
     ).then((res) => {
       console.log(res.json());
+      alert("Successfully Updated"); 
+      
     });
   };
   return (
