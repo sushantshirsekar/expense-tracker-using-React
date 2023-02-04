@@ -1,36 +1,20 @@
 
-import Layout from "./Layout";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Signup from "./routes/SignUp";
 import Home from "./routes/Home";
 import Welcome from "./routes/Welcome";
+import UpdatePage from "./routes/UpdatePage";
 
 function App() {
   return (
     <>
-      <Layout>
-        <Routes>
-        <Route
-            path="/"
-            element={
-              <Home />
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <Signup />
-            }
-          />
-          <Route
-            path="/welcome"
-            element={
-              <Welcome />
-            }
-          />
-        </Routes>
-      </Layout>
+      <Routes>
+        <Route path="/home" element={<Home />}/>
+        <Route path="/" element={<Signup />}/>
+        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/update" element={<UpdatePage />}/>
+      </Routes>
     </>
   );
 }
