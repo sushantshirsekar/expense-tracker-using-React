@@ -1,7 +1,7 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , Link} from "react-router-dom";
 
 const SignUp = () => {
   let confirmPasswordRef = useRef("");
@@ -12,7 +12,6 @@ const SignUp = () => {
 
   const logInHandler = (token) => {
     nav("/welcome");
-    let storageId = localStorage.getItem("idToken");
     fetch(
       "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBWGYRRzV87ZdrnvV_7QsU_lrt4uA9A2b4",
       {
@@ -173,6 +172,7 @@ const SignUp = () => {
                 id="formBasicConfirmPassword"
               />
             </Form.Group>
+            {logInStatus && <Link className="py-5" to="/forgotpassword">forgot password?</Link>} <br />
             {logInStatus && (
               <Button variant="secondary" className="mb-2" type="submit">
                 Log in
