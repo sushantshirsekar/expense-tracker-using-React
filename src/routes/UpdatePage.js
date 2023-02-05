@@ -1,8 +1,11 @@
-import { useRef } from "react";
+import {  useRef } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import Logout from "../components/LogOut";
 
 const UpdatePage = () => {
-  let emailVerification = localStorage.getItem("emailVerified");
+  const nav = useNavigate();
+
   const nameref = useRef("");
   const picref = useRef("");
   const verifyHandler = () => {
@@ -35,7 +38,8 @@ const UpdatePage = () => {
       })
       .then((data) => {
         console.log(data);
-        alert("Please Check  " + data.email);
+        alert("Please Check  " + data.email + "and login again");
+        nav("/");
       })
       .catch((err) => alert(err.message));
   };
@@ -76,47 +80,59 @@ const UpdatePage = () => {
         }
       })
       .then((data) => {
-        localStorage.setItem("displayName", data.displayName);
-        localStorage.setItem("photoUrl", data.photoUrl);
+
       })
       .catch((err) => alert(err.message));
   };
 
+
   return (
-    <Container>
-      <h1>Update Details</h1> <br />
-      <Form onSubmit={submitHandler}>
-        <Form.Group className="mb-3" controlId="formBasicName">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Update Name"
-            ref={nameref}
-            defaultValue={localStorage.getItem("displayName")}
-          />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="formPhotoUrl">
-          <Form.Label>Photo Url: </Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Update Photo Url"
-            ref={picref}
-            defaultValue={localStorage.getItem("photoUrl")}
-          />
-        </Form.Group>
-        <Button type="submit" variant="secondary">
-          Update
-        </Button>
-      </Form>
-      {!emailVerification && (
-        <div className="mb-5">
-          <h1>Verify your Email</h1>
-          <Button variant="secondary" onClick={verifyHandler}>
-            Verify
-          </Button>
+    <>
+      <Container>
+        <div className="d-flex justify-content-center">
+          <div className="mx-5 px-5">
+            <h1>Update Details</h1>
+          </div>
+          <div className="align-text-end  mx-5 px-5 ">
+            <Logout />
+          </div>
         </div>
-      )}
-    </Container>
+        <br />
+        <Form onSubmit={submitHandler}  style={{marginLeft:'280px'}}>
+          <Form.Group className="mb-3" controlId="formBasicName">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Update Name"
+              ref={nameref}
+              defaultValue={localStorage.getItem('displayName')}
+              style={{width:'400px'}}
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="formPhotoUrl">
+            <Form.Label>Photo Url: </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Update Photo Url"
+              ref={picref}
+              defaultValue={localStorage.getItem('photoUrl')}
+              style={{width:'400px'}}
+            />
+          </Form.Group>
+          <Button type="submit" variant="secondary">
+            Update
+          </Button>
+        </Form>
+        
+           <div className="mb-5 mt-5" style={{marginLeft:'280px'}} >
+            <h1> {localStorage.getItem('emailVerified') ? "Your Email is Verified": "Verify your email"}</h1>
+            {!localStorage.getItem('emailVerified') && <Button variant="secondary" className="mt-2" onClick={verifyHandler}>
+              Verify
+            </Button>}
+          </div>
+        
+      </Container>
+    </>
   );
 };
 export default UpdatePage;

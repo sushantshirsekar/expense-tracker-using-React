@@ -8,20 +8,57 @@ const SignUp = () => {
   let emailRef = useRef("");
   let passwordRef = useRef("");
   const [logInStatus, setLogInStatus] = useState(true);
-  const nav = useNavigate(); 
+  const nav = useNavigate();
 
-    const logInHandler = (token) => {
-        nav("/welcome");
-    }
-  
+  const logInHandler = (token) => {
+    nav("/welcome");
+    let storageId = localStorage.getItem("idToken");
+    fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBWGYRRzV87ZdrnvV_7QsU_lrt4uA9A2b4",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          idToken: token,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage = "Registeration Failed";
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((data) => {
+        if(data.users[0].emailVerified){
+        localStorage.setItem("emailVerified", data.users[0].emailVerified);
+            console.log('Email is Verified');
+        }
+        else{
+            console.log("Email is not verified");
+        }
+
+        console.log(data.users[0]);
+        console.log(data);
+      });
+  };
 
   const submitHandler = (event) => {
     event.preventDefault();
     let enteredMail = emailRef.current.value;
-     
+
     let enteredConfirmPassword = confirmPasswordRef.current.value;
     if (!logInStatus) {
-        let enteredPassword = passwordRef.current.value;
+      let enteredPassword = passwordRef.current.value;
       if (enteredPassword !== enteredConfirmPassword) {
         return alert("Password and confirm password doesn't match");
       }
@@ -61,8 +98,15 @@ const SignUp = () => {
       })
       .then((data) => {
         logInHandler(data.idToken);
-        localStorage.setItem('idToken', data.idToken); 
+        localStorage.setItem("idToken", data.idToken);
         console.log(data);
+        console.log(data.displayName);
+        if (data.displayName) {
+          localStorage.setItem("displayName", data.displayName);
+        }
+        if (data.profilePicture) {
+          localStorage.setItem("photoUrl", data.profilePicture);
+        }
       })
       .catch((err) => alert(err.message));
   };
@@ -85,7 +129,11 @@ const SignUp = () => {
         >
           <h1
             className="text-center fw-bold mb-5 py-2"
-            style={{ color: "black", fontFamily: "sans-serif", borderBottom:'1px solid grey' }}
+            style={{
+              color: "black",
+              fontFamily: "sans-serif",
+              borderBottom: "1px solid grey",
+            }}
           >
             {logInStatus ? "Login" : "SignUp"}
           </h1>
