@@ -5,6 +5,8 @@ const ExpenseContext = React.createContext({
     totalAmount:0, 
     addExpense: (expense)=>{},
     removeExpense: (id)=>{},
+    firstEdit: (id)=>{},
+    secondEdit: (id)=>{},   
     isLoggedIn: false, 
     login: (token) => {},
     logout: ()=>{},

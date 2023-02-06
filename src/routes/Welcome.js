@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Expense from "../components/Expense";
 import Logout from "../components/LogOut";
 import AddExpense from "./AddExpense";
 
@@ -21,9 +20,7 @@ const Welcome = () => {
       <div>
         <AddExpense />
       </div>
-      <div>
-        <Expense />
-      </div>
+      
     </div>
   );
 };
