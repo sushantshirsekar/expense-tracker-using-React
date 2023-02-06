@@ -2,6 +2,7 @@ import {  useRef } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Logout from "../components/LogOut";
+import { Link } from "react-router-dom";
 
 const UpdatePage = () => {
   const nav = useNavigate();
@@ -90,14 +91,17 @@ const UpdatePage = () => {
     <>
       <Container>
         <div className="d-flex justify-content-center">
-          <div className="mx-5 px-5">
-            <h1>Update Details</h1>
-          </div>
-          <div className="align-text-end  mx-5 px-5 ">
+          <div className="px-5 mx-5">
+            <h1 className="text-center"> Update Details</h1>
+          </div> 
+          <div className="text-end  mx-5 px-5 ">
             <Logout />
           </div>
         </div>
-        <br />
+        <div>
+            <p className="text-center">Go to <Link to="/welcome">Expense Tracker</Link></p>
+          </div>
+        
         <Form onSubmit={submitHandler}  style={{marginLeft:'280px'}}>
           <Form.Group className="mb-3" controlId="formBasicName">
             <Form.Label>Name</Form.Label>
