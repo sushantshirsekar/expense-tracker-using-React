@@ -1,7 +1,9 @@
 import { useContext, useRef, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
+import { useDispatch, useSelector } from "react-redux";
 import ExpenseContext from "../expense-context";
+import { premiumActions } from "../store/expense-reducer";
 
 const AddExpense = () => {
   const descRef = useRef("");
@@ -9,7 +11,8 @@ const AddExpense = () => {
   const amountRef = useRef("");
   const expenseCtx = useContext(ExpenseContext);
   const [edit, setEdit] = useState(false);
-
+  const dispatch = useDispatch(); 
+  const isPremium = useSelector(state=> state.premium.isPremium); 
   const submitHandler = (event) => {
     event.preventDefault();
 
@@ -19,6 +22,9 @@ const AddExpense = () => {
 
     if (!enteredDesc || !enteredCat || !enteredAmnt) {
       return alert("Please enter all input fields");
+    }
+    if(enteredAmnt >= 10000){
+      dispatch(premiumActions.activePremium()); 
     }
     let data = {
       description: enteredDesc,
@@ -144,6 +150,9 @@ const AddExpense = () => {
                       Delete
                     </Button>
                     <Button onClick={editHandler}>Edit</Button>
+                  </div>
+                  <div className="mt-2">
+                    {isPremium && <Button>Active Premium</Button>}
                   </div>
                 </ListGroup.Item>
               );

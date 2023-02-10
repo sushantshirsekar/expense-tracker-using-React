@@ -2,6 +2,8 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useRef, useState } from "react";
 import { useNavigate , Link} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../store/auth-reducer";
 
 const SignUp = () => {
   let confirmPasswordRef = useRef("");
@@ -9,6 +11,8 @@ const SignUp = () => {
   let passwordRef = useRef("");
   const [logInStatus, setLogInStatus] = useState(true);
   const nav = useNavigate();
+  const auth = useSelector(state=> state.auth.token); 
+  const dispatch = useDispatch(); 
 
   const logInHandler = (token) => {
     nav("/welcome");
@@ -45,6 +49,7 @@ const SignUp = () => {
         else{
             console.log("Email is not verified");
         }
+
 
         console.log(data.users[0]);
         console.log(data);
@@ -97,7 +102,8 @@ const SignUp = () => {
       })
       .then((data) => {
         logInHandler(data.idToken);
-        localStorage.setItem("idToken", data.idToken);
+        dispatch(authActions.login(data.idToken));
+        console.log(auth); 
         console.log(data);
         console.log(data.displayName);
         if (data.displayName) {
