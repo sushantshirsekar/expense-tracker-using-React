@@ -1,0 +1,14 @@
+.bg-light{
+    background: #e4e4e4;
+    margin-top: 0;
+  }
+  
+  .bg-dark{
+    background-color: #282c34;
+    color: white;
+  }
+
+  .toggle{
+    background-color: goldenrod;
+    border: 1px solid gold;
+  }

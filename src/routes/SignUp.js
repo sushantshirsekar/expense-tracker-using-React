@@ -4,8 +4,10 @@ import { useRef, useState } from "react";
 import { useNavigate , Link} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../store/auth-reducer";
+import { AddExpenseActions } from "../store/addExpense-reducer";
 
 const SignUp = () => {
+  const expenses = useSelector(state => state.expenses); 
   let confirmPasswordRef = useRef("");
   let emailRef = useRef("");
   let passwordRef = useRef("");
@@ -53,6 +55,33 @@ const SignUp = () => {
 
         console.log(data.users[0]);
         console.log(data);
+
+        fetch('https://expense-tracker-db-a1884-default-rtdb.firebaseio.com/expense.json')
+        .then((res)=>{
+          if(res.ok){
+            return res.json(); 
+          }
+        }).then((data)=> {
+          console.log(data);
+          let arr = []; 
+          for(const key in data){
+            dispatch(AddExpenseActions.addExpense({
+              id: key, 
+              description: data[key].description, 
+              category: data[key].category,
+              amount: data[key].amount, 
+            }))
+          }
+          for(const key in data){
+            arr.push({
+              id: key, 
+              description: data[key].description, 
+              category: data[key].category,
+              amount: data[key].amount, 
+            })
+          }
+          console.log(arr);
+        })
       });
   };
 
