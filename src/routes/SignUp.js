@@ -1,89 +1,17 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useRef, useState } from "react";
-import { useNavigate , Link} from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { useDispatch} from "react-redux";
 import { authActions } from "../store/auth-reducer";
-import { AddExpenseActions } from "../store/addExpense-reducer";
 
 const SignUp = () => {
-  const expenses = useSelector(state => state.expenses); 
   let confirmPasswordRef = useRef("");
   let emailRef = useRef("");
   let passwordRef = useRef("");
   const [logInStatus, setLogInStatus] = useState(true);
   const nav = useNavigate();
-  const auth = useSelector(state=> state.auth.token); 
-  const dispatch = useDispatch(); 
-
-  const logInHandler = (token) => {
-    nav("/welcome");
-    fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBWGYRRzV87ZdrnvV_7QsU_lrt4uA9A2b4",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          idToken: token,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            let errorMessage = "Registeration Failed";
-            if (data && data.error && data.error.message) {
-              errorMessage = data.error.message;
-            }
-            throw new Error(errorMessage);
-          });
-        }
-      })
-      .then((data) => {
-        if(data.users[0].emailVerified){
-        localStorage.setItem("emailVerified", data.users[0].emailVerified);
-            console.log('Email is Verified');
-        }
-        else{
-            console.log("Email is not verified");
-        }
-
-
-        console.log(data.users[0]);
-        console.log(data);
-
-        fetch('https://expense-tracker-db-a1884-default-rtdb.firebaseio.com/expense.json')
-        .then((res)=>{
-          if(res.ok){
-            return res.json(); 
-          }
-        }).then((data)=> {
-          console.log(data);
-          let arr = []; 
-          for(const key in data){
-            dispatch(AddExpenseActions.addExpense({
-              id: key, 
-              description: data[key].description, 
-              category: data[key].category,
-              amount: data[key].amount, 
-            }))
-          }
-          for(const key in data){
-            arr.push({
-              id: key, 
-              description: data[key].description, 
-              category: data[key].category,
-              amount: data[key].amount, 
-            })
-          }
-          console.log(arr);
-        })
-      });
-  };
+  const dispatch = useDispatch();
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -130,11 +58,10 @@ const SignUp = () => {
         }
       })
       .then((data) => {
+        localStorage.setItem("email", data.email);
         logInHandler(data.idToken);
+
         dispatch(authActions.login(data.idToken));
-        console.log(auth); 
-        console.log(data);
-        console.log(data.displayName);
         if (data.displayName) {
           localStorage.setItem("displayName", data.displayName);
         }
@@ -144,6 +71,36 @@ const SignUp = () => {
       })
       .catch((err) => alert(err.message));
   };
+
+  const logInHandler = () => {
+    nav("/welcome");
+    // let email = localStorage.getItem("email");
+    // let validEmail = "";
+    // for (let i = 0; i < email.length; i++) {
+    //   if (email[i] !== "." && email[i] !== "@") {
+    //     validEmail = validEmail + email[i];
+    //   }
+    // }
+    // fetch(
+    //   `https://expense-tracker-db-a1884-default-rtdb.firebaseio.com/${validEmail}.json`
+    // )
+    //   .then((res) => {
+    //     if (res.ok) {
+    //       return res.json();
+    //     }
+    //   })
+    //   .then((data) => {
+    //     console.log(data);
+    //     dispatch(
+    //       AddExpenseActions.replaceExpenses({
+    //         expenses: data.expenses,
+    //         totalAmount: data.totalAmount,
+    //         premium: data.premium,
+    //       })
+    //     );
+    //   });
+  };
+
   const switchStatus = () => {
     setLogInStatus((prev) => !prev);
   };
@@ -207,7 +164,12 @@ const SignUp = () => {
                 id="formBasicConfirmPassword"
               />
             </Form.Group>
-            {logInStatus && <Link className="py-5" to="/forgotpassword">forgot password?</Link>} <br />
+            {logInStatus && (
+              <Link className="py-5" to="/forgotpassword">
+                forgot password?
+              </Link>
+            )}{" "}
+            <br />
             {logInStatus && (
               <Button variant="secondary" className="mb-2" type="submit">
                 Log in
